@@ -1,4 +1,4 @@
-#### Configuración `docker-compose.yaml` 
+# Configuración `docker-compose.yaml` 
 
 Este archivo permite levantar el contenedor `hiperlife-container` con una configuración lista para desarrollar y compilar aplicaciones basadas en HiperLife.
 
@@ -13,8 +13,10 @@ Este archivo permite levantar el contenedor `hiperlife-container` con una config
 
 Esto permite que un usuario pueda comenzar a trabajar simplemente con `docker compose up`, sin necesidad de instalar dependencias localmente.
 
+---
 
-#### Configuración `Dockerfile-app1` 
+
+# Configuración Dockerfile-app1 
 
 
 Este Dockerfile define la imagen `hiperlife-app2`, una extensión personalizada de la imagen base `hiperlife/hiperlife`, diseñada para compilar y ejecutar proyectos de HyperLife de manera modular, interactiva y persistente.
