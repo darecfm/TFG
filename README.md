@@ -23,7 +23,7 @@ Desde la carpeta donde está  Dockerfile-app1, ejecuta:
 docker build -t hiperlife-app2 -f Dockerfile-app1 .
 ```
 
-•  hiperlife-app2: nombre de tu imagen personalizada, puedes poner el nombre que desees. 
+•  hiperlife-app2: nombre de tu imagen personalizada, puedes poner el nombre que desees. Pero si la editas acuerdate de cambiar la imagen en el file docker-compose.yaml
 
 •  Dockerfile-app1: tu archivo Dockerfile.
 
