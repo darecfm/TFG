@@ -1,1 +1,12 @@
 
+services:
+  hiperlife-container:
+    image: hiperlife-app2
+    volumes:
+      - ./External:/home/hl-user/External  # Volumen único para código, compilación y resultados
+    stdin_open: true
+    tty: true
+    command: >
+      bash -c "
+      /home/hl-user/bin/initHL.sh &&
+      exec bash"
