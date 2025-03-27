@@ -1,6 +1,6 @@
 # TFG
 
-#### Configuración `docker-compose.yaml` explicada
+#### Configuración `docker-compose.yaml` 
 
 Este archivo permite levantar el contenedor `hiperlife-container` con una configuración lista para desarrollar y compilar aplicaciones basadas en HiperLife.
 
