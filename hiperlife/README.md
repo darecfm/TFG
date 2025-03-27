@@ -14,7 +14,7 @@ Este archivo permite levantar el contenedor `hiperlife-container` con una config
 Esto permite que un usuario pueda comenzar a trabajar simplemente con `docker compose up`, sin necesidad de instalar dependencias localmente.
 
 ---
-
+---
 
 # Configuración `Dockerfile-app1`
 
@@ -106,3 +106,21 @@ docker compose up
 > La compilación se hará automáticamente gracias al script `initHL.sh`.
 
 La compilación del código no se hace durante la construcción de la imagen.  Se traslada al script `initHL.sh` y se ejecuta **al iniciar el contenedor** con `docker-compose`.
+
+
+---
+---
+
+# Configuración `initHL.sh`
+
+Este script se encarga de **preparar el entorno de compilación** y **compilar automáticamente el proyecto HyperLife** dentro del contenedor Docker.
+
+---
+
+El script `initHL.sh` automatiza las tareas de:
+
+1. Verificar si el código fuente ya está en la carpeta compartida `External/`.
+2. Copiar el proyecto si no está presente.
+3. Crear las carpetas necesarias para compilar (`build`) y para instalar (`hl-bin`).
+4. Ejecutar `cmake` con los flags adecuados.
+5. Instalar el binario compilado dentro del contenedor.
