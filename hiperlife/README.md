@@ -93,8 +93,6 @@ CMD ["/bin/bash"]
 El contenedor se inicia en el entorno del usuario, con una shell lista para usarse.
 
 ---
----
-
 
 ##  Uso
 
@@ -110,6 +108,7 @@ La compilación del código no se hace durante la construcción de la imagen.  S
 
 ---
 ---
+
 
 # Configuración `initHL.sh`
 
