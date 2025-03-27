@@ -16,7 +16,7 @@ Esto permite que un usuario pueda comenzar a trabajar simplemente con `docker co
 ---
 
 
-# Configuración Dockerfile-app1 
+# Configuración `Dockerfile-app1`
 
 
 Este Dockerfile define la imagen `hiperlife-app2`, una extensión personalizada de la imagen base `hiperlife/hiperlife`, diseñada para compilar y ejecutar proyectos de HyperLife de manera modular, interactiva y persistente.
