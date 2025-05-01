@@ -1,9 +1,11 @@
 
 services:
   hiperlife-container:
-    image: hiperlife-app2
+    image: hiperlife-app
     volumes:
       - ./External:/home/hl-user/External  # Volumen único para código, compilación y resultados
+    environment:
+      - PROJECT_NAME=${PROJECT_NAME:-hl-base-project} # personaliza el nombre del proyecto
     stdin_open: true
     tty: true
     command: >
