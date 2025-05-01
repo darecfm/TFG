@@ -16,10 +16,10 @@ Esto permite que un usuario pueda comenzar a trabajar simplemente con `docker co
 ---
 ---
 
-# Configuración `Dockerfile-app1`
+# Configuración `Dockerfile-app`
 
 
-Este Dockerfile define la imagen `hiperlife-app2`, una extensión personalizada de la imagen base `hiperlife/hiperlife`, diseñada para compilar y ejecutar proyectos de HyperLife de manera modular, interactiva y persistente.
+Este Dockerfile define la imagen `hiperlife-app`, una extensión personalizada de la imagen base `hiperlife/hiperlife`, diseñada para compilar y ejecutar proyectos de HyperLife de manera modular, interactiva y persistente.
 
 ##  Detalles de configuración
 
@@ -97,11 +97,13 @@ El contenedor se inicia en el entorno del usuario, con una shell lista para usar
 ##  Uso
 
 ```bash
-docker build -t hiperlife-app2 -f Dockerfile-app1 .
-docker compose up
+docker build -t hiperlife-app -f Dockerfile-app .
+PROJECT_NAME=NOM_PROJECT docker compose up
 ```
 
-> La compilación se hará automáticamente gracias al script `initHL.sh`.
+> La compilación se hará automáticamente gracias al script `initHL.sh`. 
+
+> La incorporación del parámetro de entorno PROJECT_NAME en el script de inicialización (initHL.sh) permite al usuario definir dinámicamente el nombre del proyecto que desea clonar, compilar y gestionar dentro del contenedor.
 
 La compilación del código no se hace durante la construcción de la imagen.  Se traslada al script `initHL.sh` y se ejecuta **al iniciar el contenedor** con `docker-compose`.
 
