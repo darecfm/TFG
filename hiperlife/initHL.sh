@@ -1,34 +1,104 @@
 #!/bin/bash
+# --------------------------------------------------------------------------------------------------------
+# Script de inicialización de un nuevo proyecto Hiperlife basado en plantilla.
+# Realiza copia, renombrado, configuración y generación de archivos de build para VS Code.
+# --------------------------------------------------------------------------------------------------------
 
-PROJECT_NAME="${PROJECT_NAME:-hl-base-project}"  # Si no se pasa, usa el default
-echo "📁 Usando nombre de proyecto: $PROJECT_NAME"
+### Usa el nombre del proyecto definido por variable de entorno o por defecto "hl-base-project"
+PROJECT_NAME="${PROJECT_NAME:-hl-base-project}"
+echo "Using Project Name: $PROJECT_NAME"
 
 
-echo "Verificando si el código base ya existe en External..."
-
-#si la carpeta del codigo no esta en external, la copiamos..
+### 1. Copia el código base si aún no existe en External.
+echo "Checking if the base code already exists in External..."
 if [ ! -d "/home/hl-user/External/${PROJECT_NAME}" ]; then
-    echo "📂 Copiando ${PROJECT_NAME} a External..."
-    cp -r /home/hl-user/hl-src/hl-base-project "/home/hl-user/External/$PROJECT_NAME" # cambiaaaaaaaar
+    echo "Copying ${PROJECT_NAME} to External..."
+    cp -r /home/hl-user/hl-src/hl-base-project "/home/hl-user/External/$PROJECT_NAME" || { echo "Error: No se pudo copiar el proyecto"; exit 1; }
+
+    ## Actualiza el CMakeLists.txt raíz para apuntar al nuevo subdirectorio
+    ROOT_CMAKE="/home/hl-user/External/${PROJECT_NAME}/CMakeLists.txt"
+    sed -i "s|add_subdirectory(.*)|add_subdirectory(${PROJECT_NAME})|" "$ROOT_CMAKE" || { echo "Error: No se pudo actualizar add_subdirectory"; exit 1; }
 fi
 
-echo "Configurando compilación en External..."
-#crear el build antes de compilar 
+
+### 2. Actualiza el userConfig.cmake con el nuevo nombre de proyecto.
+CONFIG_FILE="/home/hl-user/External/${PROJECT_NAME}/userConfig.cmake"
+echo "Updating  $CONFIG_FILE..."
+sed -i "s/set(PROJECT_NAME .*)/set(PROJECT_NAME ${PROJECT_NAME})/" "$CONFIG_FILE" || { echo "Error: No se pudo actualizar PROJECT_NAME"; exit 1; }
+sed -i "s|#list(APPEND APPS .*|list(APPEND APPS ${PROJECT_NAME})|" "$CONFIG_FILE" || { echo "Error: No se pudo actualizar APPS"; exit 1; }
+
+
+### 3. Renombra directorios y archivos fuente para coincidir con el nombre del proyecto
+echo "Renaming directories and files..."
+mv "/home/hl-user/External/${PROJECT_NAME}/EmptyApp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}" || { echo "Error: No se pudo renombrar EmptyApp"; exit 1; }
+mv "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/EmptyApp.cpp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/${PROJECT_NAME}.cpp" || { echo "Error: No se pudo renombrar EmptyApp.cpp"; exit 1; }
+
+
+### 4. Crea un nuevo CMakeLists.txt para el ejecutable dentro del subdirectorio
+echo "Updating root CMakeLists.txt..."
+cat > "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/CMakeLists.txt" << EOF
+include(\${CMAKE_SOURCE_DIR}/userConfig.cmake)
+
+set(PROGRAM_NAME hl\${PROJECT_NAME})
+set(PROGRAM_CPP \${PROJECT_NAME}.cpp)
+
+add_executable(\${PROGRAM_NAME} \${PROGRAM_CPP})
+
+target_link_libraries(\${PROGRAM_NAME}
+    hlCore
+    hlUtils
+    hlAdjcyLists
+    hlFields
+    hlBasisFunctions
+    hlMeshCreator
+    hlMeshMap
+    hlCubature
+    hlCubatureSet
+    hlBasisFunctionsSet
+    hlDistMesh
+    hlIO
+    hlDOFsHandler
+    hlIntegration
+    hlHiPerProblem
+    hlLinearSolvers
+    hlNonlinearSolvers
+    hlModelUtils
+    hlPostProc
+    hlTimeIterators
+    hlPredefinedElementFillings
+    # Posibilidad de extender con más librerias (Trilinos, Teuchos, etc.)
+)
+
+install(TARGETS \${PROGRAM_NAME} DESTINATION ../hl-bin)
+
+message(STATUS "Creando ejecutable: \${PROGRAM_NAME}")
+EOF
+
+
+### 5. Prepara carpetas de build y binarios.
+echo "Setting up build configuration in External..."
 mkdir -p /home/hl-user/External/${PROJECT_NAME}/build
 mkdir -p /home/hl-user/External/hl-bin
 cd /home/hl-user/External/${PROJECT_NAME}/build
 
- # Crear configuración de VS Code
+
+### 6. Configuración de VS Code para el proyecto (IntelliSense, debug y tareas de build)
 VSCODE_DIR="/home/hl-user/External/${PROJECT_NAME}/.vscode"
 mkdir -p "$VSCODE_DIR"
 
-# Archivo c_cpp_properties.json
+## Configuración de rutas de includes y toolchain para IntelliSense  (c_cpp_properties.json)
 cat > "$VSCODE_DIR/c_cpp_properties.json" << EOF
 {
     "configurations": [
         {
             "name": "Linux",
             "compileCommands": "\${workspaceFolder}/build/compile_commands.json",
+            "includePath": [
+                "\${workspaceFolder}/**",
+                "/home/hl-user/hl-bin/include",
+                "/home/hl-user/hl-bin/third-party/Trilinos/include",
+                "/usr/lib/aarch64-linux-gnu/openmpi/include"
+            ], 
             "compilerPath": "/usr/bin/aarch64-linux-gnu-g++",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
@@ -39,23 +109,24 @@ cat > "$VSCODE_DIR/c_cpp_properties.json" << EOF
 }
 EOF
 
-# Archivo launch.json
+## Configuración de depuración y ejecución (launch.json)
 cat > "$VSCODE_DIR/launch.json" << EOF
 {
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run EmptyApp",
+      "name": "Run hl${PROJECT_NAME}",
       "type": "cppdbg",
       "request": "launch",
-      "program": "\${workspaceFolder}/build/EmptyApp/hlEmptyApp",
+      "program": "/home/hl-user/External/hl-bin/hl${PROJECT_NAME}",
       "args": [],
       "stopAtEntry": false,
       "cwd": "\${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "CMake Build",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -65,17 +136,18 @@ cat > "$VSCODE_DIR/launch.json" << EOF
       ]
     },
     {
-      "name": "Debug EmptyApp",
+      "name": "Debug hl${PROJECT_NAME}",
       "type": "cppdbg",
       "request": "launch",
-      "program": "\${workspaceFolder}/build/EmptyApp/hlEmptyApp",
+      "program": "/home/hl-user/External/hl-bin/hl${PROJECT_NAME}",
       "args": [],
       "stopAtEntry": true,
       "cwd": "\${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "preLaunchTask": "CMake Build",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -93,14 +165,25 @@ cat > "$VSCODE_DIR/launch.json" << EOF
 }
 EOF
 
-# Archivo tasks.json
+### Tarea de build personalizada para VS Code (tasks.json)
 cat > "$VSCODE_DIR/tasks.json" << EOF
 {
+    "version": "2.0.0",
     "tasks": [
         {
+            "label": "CMake Build",
+            "type": "shell",
+            "command": "cmake --build build --target install",
+            "options": {
+                "cwd": "\${workspaceFolder}"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
             "type": "cppbuild",
-            "label": "C/C++: aarch64-linux-gnu-g++ build active file",
-            "command": "/usr/bin/aarch64-linux-gnu-g++",
+            "label": "C/C++: g++-11 build active file",
+            "command": "/usr/bin/g++-11",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -120,22 +203,32 @@ cat > "$VSCODE_DIR/tasks.json" << EOF
             },
             "detail": "Task generated by Debugger."
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
 EOF
 
 
 
-#si no se ha compilado antes, lo compilamos esto hay que quitarlo 
+cat > "$VSCODE_DIR/settings.json" << EOF
+{
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.configureArgs": [
+    "-DHL_BASE_PATH=/home/hl-user/hl-bin"
+  ]
+}
+EOF
 
-    echo "⚙️  Compilando código fuente..."
-    cmake .. -D CMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -D HL_BASE_PATH=/home/hl-user/hl-bin > cmake.log 2>&1 # esto elimina el binario de la app el >> cmake.log 2>&1 
-    make install >> cmake.log 2>&1 # esto elimina el binario de la app el >> cmake.log 2>&1
-    
+# 7. Compilación y log de salida.
+echo "Compiling source code..."
+cmake .. -D CMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -D HL_BASE_PATH=/home/hl-user/hl-bin > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
+make install > cmake.log 2>&1 || { echo "Error: make install falló"; exit 1; }
+echo "Compilation details are available in cmake.log"
 
+## Verifica que se generó el ejecutable correctamente en el directorio de instalación
+ls -l /home/hl-user/External/hl-bin/hl${PROJECT_NAME} || { echo "Error: Binario no encontrado"; exit 1; }
 
-echo " Inicialización completada"
+echo "Initialization completed"
 
 
 
