@@ -76,7 +76,7 @@ docker rmi darecfm/hiperlife-app:latest  # Para borrar la imagen si lo deseas
 ## **PASOS PARA PROBAR TU APP CON DOCKER + HIPERLIFE + VS CODE**
 ---
 
-A continuación veremos el proceso de preparación, configuración y ejecución de una aplicación basada en el framework Hiperlife dentro de un contenedor Docker, empleando Visual Studio Code como entorno de desarrollo integrado (IDE). 
+A continuación se describe, de forma técnica, el flujo completo de preparación, configuración y ejecución de una aplicación basada en Hiperlife dentro de un contenedor Docker, usando Visual Studio Code como IDE.
 
 ## 1. Requisitos Previos
 
@@ -101,7 +101,7 @@ A continuación veremos el proceso de preparación, configuración y ejecución 
 
 - Código fuente de ejemplo (por ejemplo: `hl-base-project`) o tu propio proyecto basado en el framework Hiperlife.
 
-- **Estructura esperada:**
+- **Estructura esperada (dentro de External/):**
 
       ```
       External/                            
@@ -134,7 +134,7 @@ A continuación veremos el proceso de preparación, configuración y ejecución 
     > **Nota:**  Puedes reemplazar todas las apariciones de nombre-del-proyecto si generas otro proyecto (PRueba80, SimXYZ, etc.) automáticamente desde tu script initHL.sh.       
 
 
-## 4. Extensiones necesarias en Visual Studio Code
+## 2. Extensiones necesarias en Visual Studio Code
 
 Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate de tener instaladas las siguientes extensiones en VS Code:
 
@@ -146,16 +146,13 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 #### • C/C++
 
 - **ID:** `ms-vscode.cpptools`  
-- **Funcionalidad:** Habilita:
-  - IntelliSense (autocompletado, inspección de símbolos)
-  - Exploración de definiciones/declaraciones
-  - Tareas de compilación
-  - Depuración mediante GDB, LLDB o Microsoft C++ Debugger
+- **Funcionalidad:** Habilita IntelliSense, exploración de definiciones, compilación y depuración (GDB/LLDB) para proyectos en C/C++.
+
 
 > **Nota:** Tras instalar estas extensiones, reinicia Visual Studio Code para asegurar que se cargan correctamente en el contenedor.
 
 
-## 5. Configuración de VS Code para Dev Containers
+## 3. Configuración de VS Code para Dev Containers
 
 #### 1. Abrir VS Code
 
@@ -183,7 +180,7 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 
 -  Selecciona la opción deseada. VS Code realizará automáticamente:
 
-    1. Conexión SSH a Docker.
+    1. Se conecta a Docker.
 
     2. Inicio del contenedor (si aún no está corriendo).
 
@@ -194,7 +191,7 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 > Si nunca has creado un `devcontainer` para tu proyecto, VS Code te guiará para generar un archivo `.devcontainer/devcontainer.json` donde puedes especificar la imagen (`hiperlife-dev:latest`) y el `postCreateCommand` (por ejemplo: `cmake . && make install`).
 
 
-## 6. Navegar al Directorio de la Aplicación dentro del Contenedor
+## 4. Navegar al Directorio de la Aplicación dentro del Contenedor
 
 #### 1. Abrir la Terminal Integrada
 - Dentro de VS Code (ya conectado al contenedor), presiona `Ctrl + \`` (la tecla de tilde invertida).
@@ -209,7 +206,7 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 >  **Nota:** Importante: Si abres únicamente la carpeta External, las tareas de compilación y depuración no encontrarán el ejecutable ni la configuración correcta y, por tanto, fallarán.
 
 
-## 7. Ejecución y depuración desde VS Code
+## 5. Ejecución y depuración desde VS Code
 
 1. **Botón “Run”**
 
@@ -238,7 +235,7 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 
 
 
-## 8. Detener o reiniciar el contenedor
+## 6. Detener o reiniciar el contenedor
 
   1. Abre **Remote Explorer** en la barra lateral (ícono de monitor con flecha).
 
