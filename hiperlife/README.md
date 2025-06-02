@@ -97,7 +97,7 @@ El contenedor se inicia en el entorno del usuario, con una shell lista para usar
 ##  Uso
 
 ```bash
-docker build -t hiperlife-app -f Dockerfile-app .
+docker build -t darecfm/hiperlife-app:latest -f Dockerfile-app .
 PROJECT_NAME=NOM_PROJECT docker compose up
 ```
 
