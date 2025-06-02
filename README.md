@@ -76,34 +76,176 @@ docker rmi darecfm/hiperlife-app:latest  # Para borrar la imagen si lo deseas
 ## **PASOS PARA PROBAR TU APP CON DOCKER + HIPERLIFE + VS CODE**
 ---
 
-Para que todo funcione correctamente en tu entorno con Docker y Visual Studio Code, estas son las extensiones que debes tener instaladas antes de abrir el contenedor y trabajar con el proyecto Hiperlife:
+A continuación veremos el proceso de preparación, configuración y ejecución de una aplicación basada en el framework Hiperlife dentro de un contenedor Docker, empleando Visual Studio Code como entorno de desarrollo integrado (IDE). 
 
-**Extensiones necesarias en VS Code:**
+## 1. Requisitos Previos
 
-1. Dev Containers
+#### 1. Docker
 
-	•	ID: ms-vscode-remote.remote-containers
+- Debes tener **Docker Engine** (versión **20.x o superior**) instalado y en ejecución en tu sistema operativo (Linux, macOS o Windows).
+- Verifica su funcionamiento con los siguientes comandos:
 
-	•	Permite abrir entornos de desarrollo dentro de contenedores Docker directamente desde VS Code.
+  ```bash
+  docker version
+  docker info
+  ```
+  
+#### 2. Visual Studio Code (VS Code)
 
-
-2. C/C++
-
-   •	ID: ms-vscode.cpptools
-
-	•	Habilita IntelliSense, depuración, y herramientas de compilación para C y C++.
-
-
-Una vez instalado las nuevas extensiones nos dirijiremos a la parte izquierda en donde clicaremos en (remote Explorer), donde apareceran todas los dockers que tenemos habilitados y creados por lo que iremos:
-```
-Remote Explorer > Dev Containers > docker > docker-hiperlife-container-1 
-```
-Una vez localizemos nuestra maquina virtual, vemos que hay 3 iconos:
-  Flecha: Attach in current window, donde accederemos con nuestra misma ventana al contenedor
-  Ventana: Attach in new Window, que servirá para poder lanzarla en otra ventana aparte
-  X: Remove container que servirá para eliminar nuestro contenedor
+- **Versión recomendada:** ≥ 1.60 (o la versión LTS más reciente).
+- Debe estar **instalado localmente** y actualizado.
 
 
-Una vez accediendo nos fijaremos que estemos dentro de la carpeta de nuestra aplicación como lo hallamos llamado, daremos al play que se encontrara en la parte superior derecha
 
-Despues iremos a la parte inferior pulsaremos run hlPrueba01, en donde se nos abre la posibilidad no solamente de ejecutar dentro de nuestra aplicación sino de debugear
+#### 3. Repositorio Hiperlife
+
+- Código fuente de ejemplo (por ejemplo: `hl-base-project`) o tu propio proyecto basado en el framework Hiperlife.
+
+- **Estructura esperada:**
+
+      ```
+      External/                            
+      ├── hl-bin/                            
+      │   └── hlnombre-del-proyecto              # Binario compilado e instalado (por CMake + make install)
+      └── nombre-del-proyecto/                   # Proyecto principal   
+          ├── userConfig.cmake                   # Define PROJECT_NAME y lista de aplicaciones
+          ├── README.md                          # Documentación técnica del proyecto
+          ├── CMakeLists.txt                     # CMake raíz que incluye subproyecto nombre-del-proyecto/
+          ├── .gitignore     
+          └── .vscode/                          # Configuración de VS Code (compilación, debug, IntelliSense)
+          │    ├── launch.json                  # Configura ejecución y depuración de hlPrueba70
+          │    ├── tasks.json                   # Tarea personalizada de compilación con MPI + hiperlife   
+          │    ├── c_cpp_properties.json        # Rutas de include, toolchain e IntelliSense
+          │    └── settings.json                # Args de configuración para CMake (HL_BASE_PATH, etc.)
+          └──build/                             # Artefactos de build generados por CMake
+          │    ├── CMakeFiles/                  # Archivos internos de CMake 
+          │    ├── nombre-del-proyecto/         # Carpeta que contiene el binario compilado            
+          │    ├── cmake_install.cmake          # Script de instalación generado
+          │    ├── cmake.log                    # Log generado por `cmake .. > cmake.log
+          │    ├── CMakeCache.txt               # Cache de opciones CMake
+          │    ├── install_manifest.txt         # Registro de archivos instalados
+          │    └── Makefile                     # Makefile generado para compilar
+          └── nombre-del-proyecto/              # Subdirectorio con la aplicación principal
+              ├── nombre-del-proyecto.cpp       # Fichero fuente principal de la app
+              ├── AuxEmptyApp.cpp               # Fichero auxiliar (por ejemplo, para funciones separadas)
+              ├── AuxEmptyApp.h                 # Cabecera del auxiliar
+              └── CMakeLists.txt                # CMake específico del ejecutable hlPrueba70
+      ```
+    > **Nota:**  Puedes reemplazar todas las apariciones de nombre-del-proyecto si generas otro proyecto (PRueba80, SimXYZ, etc.) automáticamente desde tu script initHL.sh.       
+
+
+## 4. Extensiones necesarias en Visual Studio Code
+
+Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate de tener instaladas las siguientes extensiones en VS Code:
+
+#### • Dev Containers
+
+- **ID:** `ms-vscode-remote.remote-containers`  
+- **Funcionalidad:** Permite abrir carpetas de proyecto y entornos de desarrollo directamente dentro de contenedores Docker desde VS Code. Esta extensión es esencial para habilitar la experiencia completa de desarrollo en contenedores (devcontainer.json, volumes, comandos postCreate, etc.).
+
+#### • C/C++
+
+- **ID:** `ms-vscode.cpptools`  
+- **Funcionalidad:** Habilita:
+  - IntelliSense (autocompletado, inspección de símbolos)
+  - Exploración de definiciones/declaraciones
+  - Tareas de compilación
+  - Depuración mediante GDB, LLDB o Microsoft C++ Debugger
+
+> **Nota:** Tras instalar estas extensiones, reinicia Visual Studio Code para asegurar que se cargan correctamente en el contenedor.
+
+
+## 5. Configuración de VS Code para Dev Containers
+
+#### 1. Abrir VS Code
+
+- Abre Visual Studio Code de forma normal (sin contenedor aún).
+
+#### 2. Verificar Extensiones
+
+- En la barra lateral izquierda, haz clic en el ícono de **Extensiones** (o pulsa `Ctrl+Shift+X`).
+- Confirma que las extensiones **Dev Containers** y **C/C++** estén instaladas y habilitadas.
+
+#### 3. Abrir Remote Explorer
+
+- Pulsa `Ctrl+Shift+E` (o haz clic en el ícono de “Explorer”).
+- Desde la barra lateral, selecciona el ícono de **Remote Explorer** (forma de monitor con flecha).
+- En la sección **Dev Containers**, verás los contenedores Docker construidos/preparados (por ejemplo, `docker-hiperlife-container-1` si ya existe o tu propia etiqueta `hiperlife-dev:latest`).
+
+#### 4. Iniciar y adjuntar un contenedor
+
+- Si ya tienes un contenedor en ejecución (por ejemplo, `docker-hiperlife-container-1`), aparecerá en la lista.
+- De lo contrario, VS Code detectará la carpeta `.devcontainer` (si existe) o te sugerirá crearla.
+
+**Para adjuntar:**
+- `Attach in Current Window` (Flecha ↪): abre el contenedor en la **misma ventana** de VS Code.
+- `Attach in New Window` (Ícono de ventana): abre una **nueva instancia** de VS Code conectada al contenedor.
+
+-  Selecciona la opción deseada. VS Code realizará automáticamente:
+
+    1. Conexión SSH a Docker.
+
+    2. Inicio del contenedor (si aún no está corriendo).
+
+    3. Montaje de tu carpeta de proyecto dentro del contenedor.
+    4. Configuración de las rutas de desarrollo (IntelliSense, terminal, etc.).
+
+>  **Nota:**  
+> Si nunca has creado un `devcontainer` para tu proyecto, VS Code te guiará para generar un archivo `.devcontainer/devcontainer.json` donde puedes especificar la imagen (`hiperlife-dev:latest`) y el `postCreateCommand` (por ejemplo: `cmake . && make install`).
+
+
+## 6. Navegar al Directorio de la Aplicación dentro del Contenedor
+
+#### 1. Abrir la Terminal Integrada
+- Dentro de VS Code (ya conectado al contenedor), presiona `Ctrl + \`` (la tecla de tilde invertida).
+- Verifica que estás dentro del contenedor observando el prompt del sistema, que debería mostrar algo como: `(hl-user@container-id) /home/hl-user/External/nombre-del-proyecto`
+
+#### 2. Cambiar al Directorio de tu Aplicación
+- Antes de compilar o depurar, es imprescindible que VS Code esté apuntando directamente al directorio de tu aplicación (y no a la carpeta genérica External). Para ello:
+    - En la barra superior de VS Code, ve a File > Open Folder.
+    - Navega hasta /External/nombre-del-proyecto y ábrela.
+    - Verifica que el Explorador de archivos (lateral izquierdo) muestre únicamente el contenido de tu aplicación (archivos .cpp, CMakeLists.txt, etc.).
+
+>  **Nota:** Importante: Si abres únicamente la carpeta External, las tareas de compilación y depuración no encontrarán el ejecutable ni la configuración correcta y, por tanto, fallarán.
+
+
+## 7. Ejecución y depuración desde VS Code
+
+1. **Botón “Run”**
+
+   - Con la carpeta correcta seleccionada, haz clic en el icono de reproducción ▶ (“Run”) que aparece en la esquina superior derecha.
+   - Esto ejecutará la configuración predeterminada para tu proyecto (por ejemplo, “Run hl”) según esté definida en `launch.json`.
+
+2. **Barra de estado inferior**
+
+   - Si pulsas ▶ y no ocurre nada, revisa la barra inferior; debería aparecer un selector de configuración de ejecución `(“Run hlnombre-del-proyecto(nombre-del-proyecto)”)`.
+   - Haz clic allí para desplegar las opciones de ejecución/depuración disponibles y selecciona la que corresponda a tu aplicación.
+
+3. **Ejecutar con F5**
+
+   - Alternativamente, pulsa **F5** o usa el comando **Run > Start Debugging**.
+   - VS Code lanzará el depurador según la definición en `launch.json`:
+     - Compilará automáticamente (preLaunchTask = “CMake Build”).
+     - Iniciará GDB y se detendrá en el primer punto de interrupción (si has marcado algún breakpoint).
+
+4. **Ejecución manual en terminal**
+   - Si prefieres no usar el depurador integrado, puedes seguir trabajando en la terminal integrada (pulsa <kbd>Ctrl</kbd>+<kbd>`</kbd>).
+   - Desde `/External/nombre-del-proyecto/`, ejecuta:
+     ```bash
+     mpirun -np 4 /home/hl-user/External/hl-bin/hl<nombre-del-proyecto>
+     ```
+   - Ajusta `-np 4` según el número de procesos MPI que necesites.
+
+
+
+## 8. Detener o reiniciar el contenedor
+
+  1. Abre **Remote Explorer** en la barra lateral (ícono de monitor con flecha).
+
+2. En la sección **Dev Containers**, localiza tu contenedor (por ejemplo, `docker-hiperlife-container-1`).
+
+3. Haz clic en el icono X (“Remove Container”) junto a su nombre:
+   - Esto parará el contenedor y lo eliminará de la lista.
+   - Si deseas volver a desarrollarlo, selecciona tu imagen Docker (por ejemplo, `hiperlife-dev:latest`) 
+
+  > **Nota:** Detener el contenedor no elimina la imagen, por lo que tus cambios en `/External/nombre-del-proyecto` persistirán mientras no borres manualmente la carpeta o la imagen Docker.
