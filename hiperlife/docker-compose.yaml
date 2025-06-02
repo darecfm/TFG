@@ -1,7 +1,7 @@
 
 services:
   hiperlife-container:
-    image: hiperlife-app
+    image: darecfm/hiperlife-app:latest
     volumes:
       - ./External:/home/hl-user/External  # Volumen único para código, compilación y resultados
     environment:
