@@ -165,7 +165,7 @@ cat > "$VSCODE_DIR/launch.json" << EOF
 }
 EOF
 
-### Tarea de build personalizada para VS Code (tasks.json)
+## Tarea de build personalizada para VS Code (tasks.json)
 cat > "$VSCODE_DIR/tasks.json" << EOF
 {
     "version": "2.0.0",
@@ -207,8 +207,9 @@ cat > "$VSCODE_DIR/tasks.json" << EOF
 }
 EOF
 
-
-
+## Configuración global de CMake para VS Code:
+## Define la raíz del proyecto (`sourceDirectory`) y la carpeta de compilación (`buildDirectory`)
+## Pasa la ruta base de Hiperlife (`HL_BASE_PATH`) como argumento de configuración a CMake
 cat > "$VSCODE_DIR/settings.json" << EOF
 {
   "cmake.sourceDirectory": "${workspaceFolder}",
@@ -218,6 +219,7 @@ cat > "$VSCODE_DIR/settings.json" << EOF
   ]
 }
 EOF
+
 
 # 7. Compilación y log de salida.
 echo "Compiling source code..."
