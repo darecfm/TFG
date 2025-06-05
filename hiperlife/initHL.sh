@@ -30,11 +30,16 @@ sed -i "s|#list(APPEND APPS .*|list(APPEND APPS ${PROJECT_NAME})|" "$CONFIG_FILE
 
 ### 3. Renombra directorios y archivos fuente para coincidir con el nombre del proyecto
 echo "Renaming directories and files..."
-mv "/home/hl-user/External/${PROJECT_NAME}/EmptyApp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}" || { echo "Error: No se pudo renombrar EmptyApp"; exit 1; }
-mv "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/EmptyApp.cpp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/${PROJECT_NAME}.cpp" || { echo "Error: No se pudo renombrar EmptyApp.cpp"; exit 1; }
+# Solo renombra si EmptyApp existe y el destino NO existe todavía
+if [ -d "/home/hl-user/External/${PROJECT_NAME}/EmptyApp" ] && [ ! -d "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}" ]; then
+  mv "/home/hl-user/External/${PROJECT_NAME}/EmptyApp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}" || { echo "Error: No se pudo renombrar EmptyApp"; exit 1; }
+fi
 
+if [ -f "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/EmptyApp.cpp" ] && [ ! -f "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/${PROJECT_NAME}.cpp" ]; then
+  mv "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/EmptyApp.cpp" "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/${PROJECT_NAME}.cpp" || { echo "Error: No se pudo renombrar EmptyApp.cpp"; exit 1; }
+fi
 
-### 4. Crea un nuevo CMakeLists.txt para el ejecutable dentro del subdirectorio
+#### 4. Crea un nuevo CMakeLists.txt para el ejecutable dentro del subdirectorio
 echo "Updating root CMakeLists.txt..."
 cat > "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/CMakeLists.txt" << EOF
 include(\${CMAKE_SOURCE_DIR}/userConfig.cmake)
@@ -165,7 +170,7 @@ cat > "$VSCODE_DIR/launch.json" << EOF
 }
 EOF
 
-## Tarea de build personalizada para VS Code (tasks.json)
+### Tarea de build personalizada para VS Code (tasks.json)
 cat > "$VSCODE_DIR/tasks.json" << EOF
 {
     "version": "2.0.0",
@@ -207,23 +212,22 @@ cat > "$VSCODE_DIR/tasks.json" << EOF
 }
 EOF
 
-## Configuración global de CMake para VS Code:
-## Define la raíz del proyecto (`sourceDirectory`) y la carpeta de compilación (`buildDirectory`)
-## Pasa la ruta base de Hiperlife (`HL_BASE_PATH`) como argumento de configuración a CMake
+
+
 cat > "$VSCODE_DIR/settings.json" << EOF
 {
-  "cmake.sourceDirectory": "${workspaceFolder}",
-  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.sourceDirectory": "\${workspaceFolder}",
+  "cmake.buildDirectory": "\${workspaceFolder}/build",
   "cmake.configureArgs": [
     "-DHL_BASE_PATH=/home/hl-user/hl-bin"
   ]
 }
 EOF
 
-
 # 7. Compilación y log de salida.
 echo "Compiling source code..."
 cmake .. -D CMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -D HL_BASE_PATH=/home/hl-user/hl-bin > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
+#cmake .. -DCMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -DHL_BASE_PATH=/home/hl-user/hl-bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
 make install > cmake.log 2>&1 || { echo "Error: make install falló"; exit 1; }
 echo "Compilation details are available in cmake.log"
 
