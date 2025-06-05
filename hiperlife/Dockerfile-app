@@ -11,7 +11,8 @@ WORKDIR /home/hl-user
 # El operador '|| true' evita que falle la ejecución si ya existe
 # -------------------------------------------------------------------
 RUN mkdir -p hl-src && cd hl-src && \
-    git clone --branch dev https://gitlab.com/hiperlife/hl-base-project.git || true 
+    git clone --branch dev https://gitlab.com/hiperlife/hl-base-project.git || true && \
+    cd hl-base-project && git pull
 
 # -----------------------------------------
 # Configurar variables de entorno y carpetas

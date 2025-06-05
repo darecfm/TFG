@@ -93,7 +93,7 @@ cat > "$VSCODE_DIR/launch.json" << EOF
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
       "preLaunchTask": "CMake Build",
       "setupCommands": [
         {
@@ -114,7 +114,7 @@ cat > "$VSCODE_DIR/launch.json" << EOF
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb",
+      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
       "preLaunchTask": "CMake Build",
       "setupCommands": [
         {
@@ -175,10 +175,24 @@ cat > "$VSCODE_DIR/tasks.json" << EOF
 }
 EOF
 
-
+mkdir -p /home/hl-user/.local/share/CMakeTools/
+cat > "/home/hl-user/.local/share/CMakeTools/cmake-tools-kits.json" << EOF
+[
+  {
+    "name": "GCC 11.4.0 aarch64-linux-gnu",
+    "compilers": {
+      "C": "/usr/bin/aarch64-linux-gnu-gcc",
+      "CXX": "/usr/bin/aarch64-linux-gnu-g++"
+    },
+    "isTrusted": true
+  }
+]
+EOF
 
 cat > "$VSCODE_DIR/settings.json" << EOF
 {
+  "cmake.configureOnOpen": true,
+  "cmake.generator": "Unix Makefiles",
   "cmake.sourceDirectory": "\${workspaceFolder}",
   "cmake.buildDirectory": "\${workspaceFolder}/build",
   "cmake.configureArgs": [
@@ -189,13 +203,15 @@ EOF
 
 # 7. Compilación y log de salida.
 echo "Compiling source code..."
-cmake .. -D CMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -D HL_BASE_PATH=/home/hl-user/hl-bin > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
+#cmake .. -D CMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -D HL_BASE_PATH=/home/hl-user/hl-bin > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
 #cmake .. -DCMAKE_INSTALL_PREFIX=/home/hl-user/External/hl-bin -DHL_BASE_PATH=/home/hl-user/hl-bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > cmake.log 2>&1 || { echo "Error: CMake falló"; exit 1; }
+cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/aarch64-linux-gnu-g++ -DHL_BASE_PATH=/home/hl-user/hl-bin --no-warn-unused-cli -S/home/hl-user/External/DaniApp -B/home/hl-user/External/DaniApp/build -G "Unix Makefiles"
+#cmake -DCMAKE_BUILD_TYPE:STRING=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/mpicc -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/mpicxx -DHL_BASE_PATH=/home/hl-user/hl-bin --no-warn-unused-cli -S/home/hl-user/External/DaniApp -B/home/hl-user/External/DaniApp/build -G "Unix Makefiles"
 make install > cmake.log 2>&1 || { echo "Error: make install falló"; exit 1; }
 echo "Compilation details are available in cmake.log"
 
 ## Verifica que se generó el ejecutable correctamente en el directorio de instalación
-ls -l /home/hl-user/External/hl-bin/hl${PROJECT_NAME} || { echo "Error: Binario no encontrado"; exit 1; }
+#ls -l /home/hl-user/External/hl-bin/hl${PROJECT_NAME} || { echo "Error: Binario no encontrado"; exit 1; }
 
 echo "Initialization completed"
 
