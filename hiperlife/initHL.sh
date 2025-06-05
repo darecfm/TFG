@@ -41,43 +41,6 @@ fi
 
 #### 4. Crea un nuevo CMakeLists.txt para el ejecutable dentro del subdirectorio
 echo "Updating root CMakeLists.txt..."
-cat > "/home/hl-user/External/${PROJECT_NAME}/${PROJECT_NAME}/CMakeLists.txt" << EOF
-include(\${CMAKE_SOURCE_DIR}/userConfig.cmake)
-
-set(PROGRAM_NAME hl\${PROJECT_NAME})
-set(PROGRAM_CPP \${PROJECT_NAME}.cpp)
-
-add_executable(\${PROGRAM_NAME} \${PROGRAM_CPP})
-
-target_link_libraries(\${PROGRAM_NAME}
-    hlCore
-    hlUtils
-    hlAdjcyLists
-    hlFields
-    hlBasisFunctions
-    hlMeshCreator
-    hlMeshMap
-    hlCubature
-    hlCubatureSet
-    hlBasisFunctionsSet
-    hlDistMesh
-    hlIO
-    hlDOFsHandler
-    hlIntegration
-    hlHiPerProblem
-    hlLinearSolvers
-    hlNonlinearSolvers
-    hlModelUtils
-    hlPostProc
-    hlTimeIterators
-    hlPredefinedElementFillings
-    # Posibilidad de extender con más librerias (Trilinos, Teuchos, etc.)
-)
-
-install(TARGETS \${PROGRAM_NAME} DESTINATION ../hl-bin)
-
-message(STATUS "Creando ejecutable: \${PROGRAM_NAME}")
-EOF
 
 
 ### 5. Prepara carpetas de build y binarios.
