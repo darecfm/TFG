@@ -4,8 +4,8 @@
 # Realiza copia, renombrado, configuración y generación de archivos de build para VS Code.
 # --------------------------------------------------------------------------------------------------------
 
-### Usa el nombre del proyecto definido por variable de entorno o por defecto "hl-base-project"
-PROJECT_NAME="${PROJECT_NAME:-hl-base-project}"
+### Usa el nombre del proyecto definido por variable de entorno o por defecto "-base-project"
+PROJECT_NAME="${PROJECT_NAME:-base-project}"
 echo "Using Project Name: $PROJECT_NAME"
 
 

@@ -5,7 +5,7 @@ services:
     volumes:
       - ./External:/home/hl-user/External  # Volumen único para código, compilación y resultados
     environment:
-      - PROJECT_NAME=${PROJECT_NAME:-hl-base-project} # personaliza el nombre del proyecto
+      - PROJECT_NAME=${PROJECT_NAME:-base-project} # personaliza el nombre del proyecto
     stdin_open: true
     tty: true
     command: >
