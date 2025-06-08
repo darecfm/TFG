@@ -134,14 +134,17 @@ EOF
       "name": "Debug hl${PROJECT_NAME}",
       "type": "cppdbg",
       "request": "launch",
-      "program": "/home/hl-user/External/hl-bin/hl${PROJECT_NAME}",
+      "program": "${INSTALL_PREFIX}/hl${PROJECT_NAME}",
       "args": [],
       "stopAtEntry": true,
       "cwd": "\${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        { "name": "HL_BASE_PATH", "value": "${HL_BASE_PATH}" },
+        { "name": "DEBUG_MODE", "value": "${DEBUG_MODE}" }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
+      "miDebuggerPath": "${CXX_COMPILER%++-*}gdb",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -163,14 +166,16 @@ EOF
       "name": "Run hl${PROJECT_NAME}",
       "type": "cppdbg",
       "request": "launch",
-      "program": "/home/hl-user/External/hl-bin/hl${PROJECT_NAME}",
+      "program": "${INSTALL_PREFIX}/hl${PROJECT_NAME}",
       "args": [],
       "stopAtEntry": false,
       "cwd": "\${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        { "name": "HL_BASE_PATH", "value": "${HL_BASE_PATH}" }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/aarch64-linux-gnu-gdb",
+      "miDebuggerPath": "${CXX_COMPILER%++-*}gdb",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
@@ -200,7 +205,7 @@ EOF
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": ["$gcc"]
+            "problemMatcher": ["\$gcc"]
         },
         {
             "label": "Build Release",
@@ -210,7 +215,7 @@ EOF
                 "cwd": "\${workspaceFolder}"
             },
             "group": "build",
-            "problemMatcher": ["$gcc"]
+            "problemMatcher": ["\$gcc"]
         }
     ]
 }
@@ -223,8 +228,8 @@ EOF
   {
     "name": "GCC 11.4.0 aarch64-linux-gnu",
     "compilers": {
-      "C": "/usr/bin/aarch64-linux-gnu-gcc",
-      "CXX": "/usr/bin/aarch64-linux-gnu-g++"
+      "C": "${C_COMPILER}",
+      "CXX": "${CXX_COMPILER}"
     },
     "isTrusted": true
   }
@@ -239,7 +244,7 @@ EOF
   "cmake.sourceDirectory": "\${workspaceFolder}",
   "cmake.buildDirectory": "\${workspaceFolder}/build",
   "cmake.configureArgs": [
-    "-DHL_BASE_PATH=/home/hl-user/hl-bin"
+    "-DHL_BASE_PATH=${HL_BASE_PATH}"
   ]
 }
 EOF
@@ -301,7 +306,7 @@ configure_build() {
 #-------------------------------------------------------------------------------
 validate_installation() {
     echo "Validating installation..."
-    local executable="/home/hl-user/External/hl-bin/hl${PROJECT_NAME}"
+    local executable="${INSTALL_PREFIX}/hl${PROJECT_NAME}"
     
     # Check executable
     if [ ! -f "$executable" ]; then
