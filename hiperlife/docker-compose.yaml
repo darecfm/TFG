@@ -4,7 +4,9 @@ services:
     image: darecfm/hiperlife-app:latest
     volumes:
       - ./External:/home/hl-user/External
-      
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
     environment:
       # Variables esenciales del proyecto
       - PROJECT_NAME=${PROJECT_NAME:-base-project}
@@ -31,3 +33,4 @@ services:
       bash -c "
       /home/hl-user/bin/initHL.sh &&
       exec bash"
+
