@@ -3,13 +3,8 @@ services:
   hiperlife-container:
     image: darecfm/hiperlife-app:latest
     volumes:
-      # Volumen principal
       - ./External:/home/hl-user/External
-      # Volumen para caché de VSCode
-      - vscode-cache:/home/hl-user/.vscode-server/data/Cache
-      # Volumen para extensiones de VSCode
-      - vscode-extensions:/home/hl-user/.vscode-server/extensions
-
+      
     environment:
       # Variables esenciales del proyecto
       - PROJECT_NAME=${PROJECT_NAME:-base-project}
