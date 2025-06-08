@@ -26,7 +26,7 @@ CMAKE_FLAGS="${CMAKE_FLAGS:-}"
 
 # Display configuration
 print_configuration() {
-    echo "=== Environment Configuration ==="
+    echo "====== Environment Configuration ======"
     echo "Project name:     $PROJECT_NAME"
     echo "Debug mode:       $DEBUG_MODE"
     echo "Build directory:  $BUILD_DIR"
@@ -35,7 +35,7 @@ print_configuration() {
     echo "C Compiler:      $C_COMPILER"
     echo "C++ Compiler:    $CXX_COMPILER"
     echo "Build threads:    $NUM_THREADS"
-    echo "==============================="
+    echo "====== Project Setup Steps ======"
 }
 
 #-------------------------------------------------------------------------------
@@ -323,22 +323,48 @@ validate_installation() {
 }
 
 #-------------------------------------------------------------------------------
+# Logging and System Detection
+#-------------------------------------------------------------------------------
+log_message() {
+    local level=$1
+    local message=$2
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [$level] $message"
+}
+
+detect_system_resources() {
+    local available_memory=$(free -g | awk '/^Mem:/{print $2}')
+    local available_cores=$(nproc)
+    
+    # Solo establecer NUM_THREADS si no se proporcionó como variable de entorno
+    if [ -z "$NUM_THREADS" ]; then
+        if [ $available_cores -gt 2 ]; then
+            NUM_THREADS=$((available_cores - 2))
+        else
+            NUM_THREADS=1
+        fi
+    fi
+    
+    log_message "INFO" "Detected $available_cores cores, using $NUM_THREADS threads"
+    log_message "INFO" "Available memory: ${available_memory}G"
+}
+
+#-------------------------------------------------------------------------------
 # Main Execution
 #-------------------------------------------------------------------------------
 main() {
+    log_message "INFO" "Starting project initialization"
+    detect_system_resources
     print_configuration
-    
-    # Execute setup steps
+
     setup_project_structure || exit 1
     update_project_config || exit 1
-    rename_project_files || exit 1    
+    rename_project_files || exit 1
     setup_vscode_config || exit 1
     configure_build || exit 1
-    
-    # Validate installation
     validate_installation || exit 1
-    
+    echo "=========================="
     echo "Project initialization completed successfully"
+    echo "Click on the ''Remote Explorer'' icon... "
 }
 
 # Execute main function
