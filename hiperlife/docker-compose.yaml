@@ -1,11 +1,35 @@
-
+name: hiperlife
 services:
   hiperlife-container:
     image: darecfm/hiperlife-app:latest
     volumes:
-      - ./External:/home/hl-user/External  # Volumen único para código, compilación y resultados
+      # Volumen principal
+      - ./External:/home/hl-user/External
+      # Volumen para caché de VSCode
+      - vscode-cache:/home/hl-user/.vscode-server/data/Cache
+      # Volumen para extensiones de VSCode
+      - vscode-extensions:/home/hl-user/.vscode-server/extensions
+
     environment:
-      - PROJECT_NAME=${PROJECT_NAME:-base-project} # personaliza el nombre del proyecto
+      # Variables esenciales del proyecto
+      - PROJECT_NAME=${PROJECT_NAME:-base-project}
+      - DEBUG_MODE=${DEBUG_MODE:-1}
+      - NUM_THREADS=${NUM_THREADS:-4}
+      
+      # Variables de compilación CMake
+      - ENABLE_TESTS=${ENABLE_TESTS:-1}
+      - ENABLE_EXAMPLES=${ENABLE_EXAMPLES:-1}
+      - CMAKE_FLAGS=${CMAKE_FLAGS:-}
+      
+      # Variables de rutas
+      - BUILD_DIR=/home/hl-user/External/${PROJECT_NAME}/build
+      - SOURCE_DIR=/home/hl-user/External/${PROJECT_NAME}
+      - INSTALL_PREFIX=/home/hl-user/External/hl-bin
+      - HL_BASE_PATH=/home/hl-user/hl-bin
+      
+      # Configuración del compilador
+      - C_COMPILER=/usr/bin/aarch64-linux-gnu-gcc
+      - CXX_COMPILER=/usr/bin/aarch64-linux-gnu-g++
     stdin_open: true
     tty: true
     command: >
