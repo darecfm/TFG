@@ -1,7 +1,7 @@
 # TFG
 ---
 
-## **Pasos para crear la imagen Docker de HiperLife**
+## **Pasos para crear la imagen Docker de hiperlife**
 
 ---
 
@@ -10,22 +10,23 @@
 En tu carpeta ( tools/docker/):
 
 ```
-├── Dockerfile-app         # Dockerfile personalizado
+├── Dockerfile-app          # Dockerfile personalizado
 ├── docker-compose.yaml     # Define el servicio del contenedor
 ├── initHL.sh               # Script de inicialización y compilación
+├── .env                    # Variables de entorno personalizables
 ```
 ----------
 
 **2. Construye la imagen**
 
-Desde la carpeta donde está  Dockerfile-app1, ejecuta:
+Desde la carpeta donde está  Dockerfile-app, ejecuta:
 ```
 docker build -t darecfm/hiperlife-app:latest -f Dockerfile-app .
 ```
 
-•  hiperlife-app2: nombre de tu imagen personalizada, puedes poner el nombre que desees. Pero si la editas acuerdate de cambiar la imagen en el file docker-compose.yaml
+•  darecfm/hiperlife-app: nombre de tu imagen personalizada, puedes poner el nombre que desees. Pero si la editas acuerdate de cambiar la imagen en el file docker-compose.yaml
 
-•  Dockerfile-app1: tu archivo Dockerfile.
+•  Dockerfile-app: tu archivo Dockerfile.
 
 ----------
 
@@ -39,8 +40,14 @@ docker compose up
   • Inicialización personalizada (el usuario define el nombre del proyecto):
 
 ```
-PROJECT_NAME=nombre-del-proyecto docker compose up
+PROJECT_NAME=Nombre-del-proyecto docker compose up
 ```
+
+  • También puedes personalizar el número de Threads a utilizar:
+```
+PROJECT_NAME=Nombre-del-proyecto NUM_THREADS=5 DEBUG_MODE=1 docker-compose up
+```
+
  • Si ya has construido esta imagen previamente, puedes omitir `--build`. Sin embargo, incluirlo fuerza la reconstrucción de la imagen Docker, lo cual es útil si has hecho cambios en el `Dockerfile` o archivos del entorno que deseas aplicar.
 ```
 PROJECT_NAME=nombre-del-proyecto docker compose up --build
@@ -59,11 +66,11 @@ Esto:
 
 ----------
 
-**5. Finalizar Docker**
+**4. Finalizar Docker**
 
 ```
-docker compose down      # Para parar y eliminar el contenedor
-docker rmi darecfm/hiperlife-app:latest  # Para borrar la imagen si lo deseas
+docker compose down                         # Para parar y eliminar el contenedor
+docker rmi darecfm/hiperlife-app:latest     # Para borrar la imagen si lo deseas
 ```
 
 ---
@@ -82,7 +89,7 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
 
 #### 1. Docker
 
-- Debes tener **Docker Engine** (versión **20.x o superior**) instalado y en ejecución en tu sistema operativo (Linux, macOS o Windows).
+- Debes tener **Docker Engine** (versión **20.x o superior**) y **Docker Desktop** (versión **4.x o superior**) instalado y en ejecución en tu sistema operativo (Linux o macOS).
 - Verifica su funcionamiento con los siguientes comandos:
 
   ```bash
@@ -92,12 +99,12 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
   
 #### 2. Visual Studio Code (VS Code)
 
-- **Versión recomendada:** ≥ 1.60 (o la versión LTS más reciente).
+- **Versión recomendada:** ≥ 1.100 (o la versión LTS más reciente).
 - Debe estar **instalado localmente** y actualizado.
 
 
 
-#### 3. Repositorio Hiperlife
+#### 3. Repositorio hiperlife
 
 - Código fuente de ejemplo (por ejemplo: `hl-base-project`) o tu propio proyecto basado en el framework Hiperlife.
 
@@ -123,6 +130,7 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
           │    ├── cmake_install.cmake          # Script de instalación generado
           │    ├── cmake.log                    # Log generado por `cmake .. > cmake.log
           │    ├── CMakeCache.txt               # Cache de opciones CMake
+          │    │── compile_commands.json        # índice generado automáticamente por CMake
           │    ├── install_manifest.txt         # Registro de archivos instalados
           │    └── Makefile                     # Makefile generado para compilar
           └── nombre-del-proyecto/              # Subdirectorio con la aplicación principal
@@ -136,7 +144,7 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
 
 ## 2. Extensiones necesarias en Visual Studio Code
 
-Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate de tener instaladas las siguientes extensiones en VS Code:
+Para trabajar correctamente con el entorno Dockerizado de hiperlife, asegúrate de tener instaladas las siguientes extensiones en VS Code:
 
 #### • Dev Containers
 
@@ -148,6 +156,16 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 - **ID:** `ms-vscode.cpptools`  
 - **Funcionalidad:** Habilita IntelliSense, exploración de definiciones, compilación y depuración (GDB/LLDB) para proyectos en C/C++.
 
+### • CMake
+
+- **ID:** `twxs.cmake`  
+- **Funcionalidad:** Proporciona soporte básico para la sintaxis y el resaltado en archivos y scripts `CMakeLists.txt`.
+
+### • CMake Tools
+
+- **ID:** `ms-vscode.cmake-tools`  
+- **Funcionalidad:** Añade integración avanzada de CMake en VS Code:  
+  gestiona configuración, generación y compilación de proyectos CMake desde la interfaz gráfica, con comandos rápidos, lista de targets, tareas automáticas y soporte para `compile_commands.json`.
 
 > **Nota:** Tras instalar estas extensiones, reinicia Visual Studio Code para asegurar que se cargan correctamente en el contenedor.
 
@@ -161,7 +179,7 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 #### 2. Verificar Extensiones
 
 - En la barra lateral izquierda, haz clic en el ícono de **Extensiones** (o pulsa `Ctrl+Shift+X`).
-- Confirma que las extensiones **Dev Containers** y **C/C++** estén instaladas y habilitadas.
+- Confirma que las extensiones **Dev Containers**, **C/C++**, **CMake**, **CMake tools**, **Dev Containers**, **Docker** y **Docker Explorer** estén instaladas y habilitadas.
 
 #### 3. Abrir Remote Explorer
 
@@ -194,33 +212,33 @@ Para trabajar correctamente con el entorno Dockerizado de Hiperlife, asegúrate 
 ## 4. Navegar al Directorio de la Aplicación dentro del Contenedor
 
 #### 1. Abrir la Terminal Integrada
-- Dentro de VS Code (ya conectado al contenedor), presiona `Ctrl + \`` (la tecla de tilde invertida).
+- Dentro de VS Code (ya conectado al contenedor), dirigete a la parte superior en Terminal > New terminal
 - Verifica que estás dentro del contenedor observando el prompt del sistema, que debería mostrar algo como: `(hl-user@container-id) /home/hl-user/External/nombre-del-proyecto`
 
-#### 2. Cambiar al Directorio de tu Aplicación
+#### 2. Cambiar al Directorio de tu Aplicación "Open Workspace"
 - Antes de compilar o depurar, es imprescindible que VS Code esté apuntando directamente al directorio de tu aplicación (y no a la carpeta genérica External). Para ello:
     - En la barra superior de VS Code, ve a File > Open Folder.
     - Navega hasta /External/nombre-del-proyecto y ábrela.
     - Verifica que el Explorador de archivos (lateral izquierdo) muestre únicamente el contenido de tu aplicación (archivos .cpp, CMakeLists.txt, etc.).
+
+#### 3. Selecciona los ajustes de la barra superior de busqueda
+- Selecciona previamente [Scan For Kits]
+- Y luego selecciona el compilador GCC 11.4.0 aarch64-linux -gnu
+
 
 >  **Nota:** Importante: Si abres únicamente la carpeta External, las tareas de compilación y depuración no encontrarán el ejecutable ni la configuración correcta y, por tanto, fallarán.
 
 
 ## 5. Ejecución y depuración desde VS Code
 
-1. **Botón “Run”**
+1. **Botón “Run” en la barra de estado inferior**
 
-   - Con la carpeta correcta seleccionada, haz clic en el icono de reproducción ▶ (“Run”) que aparece en la esquina superior derecha.
+   - Con la carpeta correcta seleccionada, haz clic en el icono de reproducción ▶ (“Run”) que aparece en la parte inferior de la barra de estado.
    - Esto ejecutará la configuración predeterminada para tu proyecto (por ejemplo, “Run hl”) según esté definida en `launch.json`.
 
-2. **Barra de estado inferior**
+2. **Ejecutar con F5 o con el icono de Debugging**
 
-   - Si pulsas ▶ y no ocurre nada, revisa la barra inferior; debería aparecer un selector de configuración de ejecución `(“Run hlnombre-del-proyecto(nombre-del-proyecto)”)`.
-   - Haz clic allí para desplegar las opciones de ejecución/depuración disponibles y selecciona la que corresponda a tu aplicación.
-
-3. **Ejecutar con F5**
-
-   - Alternativamente, pulsa **F5** o usa el comando **Run > Start Debugging**.
+   - Alternativamente, pulsa **F5** o usa el icono de **Start Debugging**, previamente acuerdate de seleccionar un breakpoint para iniciar el depurador.
    - VS Code lanzará el depurador según la definición en `launch.json`:
      - Compilará automáticamente (preLaunchTask = “CMake Build”).
      - Iniciará GDB y se detendrá en el primer punto de interrupción (si has marcado algún breakpoint).
