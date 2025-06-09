@@ -1,127 +1,49 @@
-# Configuración `docker-compose.yaml` 
+# Entorno de Desarrollo para hiperlife con Docker
 
-Este archivo permite levantar el contenedor `hiperlife-container` con una configuración lista para desarrollar y compilar aplicaciones basadas en HiperLife.
-
-- **Volumen único (`External`)**:
-  Se monta un único volumen que contiene el código fuente, archivos de configuración y resultados de compilación. Esto simplifica el manejo de archivos y evita conflictos por sobrescritura entre contenedor y host.
-
-- **Ejecución automática de `initHL.sh`**:
-  El script `initHL.sh` es invocado automáticamente al arrancar el contenedor. Este se encarga de compilar el proyecto, configurar los entornos y dejarlo listo para trabajar.
-
-- **Mantener el contenedor activo (`exec bash`)**:
-  Una vez terminada la inicialización, se ejecuta un bash interactivo para que el usuario pueda seguir trabajando dentro del contenedor de forma manual si lo desea.
-
-Esto permite que un usuario pueda comenzar a trabajar simplemente con `docker compose up`, sin necesidad de instalar dependencias localmente.
-
----
----
-
-# Configuración `Dockerfile-app`
-
-
-Este Dockerfile define la imagen `hiperlife-app`, una extensión personalizada de la imagen base `hiperlife/hiperlife`, diseñada para compilar y ejecutar proyectos de HyperLife de manera modular, interactiva y persistente.
-
-##  Detalles de configuración
-
-###  Imagen base
-
-```dockerfile
-FROM hiperlife/hiperlife
-```
-
-Utiliza una imagen base ya preparada con dependencias científicas y bibliotecas necesarias.
+Este sistema prepara un contenedor completamente funcional para desarrollar y compilar proyectos basados en hiperlife, sin necesidad de realizar pasos manuales adicionales.
 
 ---
 
-###  Configuración del usuario y entorno
+## ¿Qué hace cada archivo?
 
-```dockerfile
-USER hl-user
-WORKDIR /home/hl-user
-```
+### `docker-compose.yaml`
+- Levanta el servicio principal `hiperlife-container` a partir de la imagen lista para desarrollar.
+- Monta el volumen `External/`, que persiste el código fuente y los binarios entre el contenedor y tu máquina local.
+- Define variables de entorno (`PROJECT_NAME`, `DEBUG_MODE`, `NUM_THREADS`, etc.) sin necesidad de modificar el contenedor.
+- Ejecuta automáticamente el script de inicialización `initHL.sh` al arrancar el contenedor.
 
-Define el usuario de ejecución por defecto y su entorno de trabajo.
+### `Dockerfile-app`
+- Extiende la imagen base de HiperLife con herramientas útiles como `gdb`.
+- Preconfigura rutas y variables de entorno estándar.
+- Copia y da permisos al script de inicialización.
+- Deja el contenedor en modo interactivo (`CMD ["/bin/bash"]`) para que puedas seguir trabajando dentro del entorno.
 
----
+### `initHL.sh`
+- Automatiza la preparación del entorno de desarrollo.
+- Si el proyecto definido por `PROJECT_NAME` no existe, copia una plantilla base desde el contenedor.
+- Crea todas las carpetas necesarias para compilar e instalar el binario.
+- Ejecuta `CMake` con las opciones adecuadas, controladas por variables como `ENABLE_TESTS`, `ENABLE_EXAMPLES`, etc.
+- Instala el binario compilado en el volumen compartido listo para ser ejecutado o depurado.
 
-### Clonación del proyecto
-
-```dockerfile
-RUN mkdir -p hl-src && cd hl-src && \
-    git clone --branch dev https://gitlab.com/hiperlife/hl-base-project.git || true
-```
-
-Clona el repositorio si aún no existe. El operador `|| true` evita errores si ya fue clonado.
-
----
-
-###  Configuración de entorno y estructura
-
-```dockerfile
-ENV HL_BASE_PATH=/home/hl-user/hl-bin
-RUN mkdir -p /home/hl-user/bin
-ENV PATH="${PATH}:/home/hl-user/bin"
-```
-
-Se configura una ruta estándar de instalación para HL y se añade al `PATH`.
-
----
-
-###  Inclusión del script de inicialización
-
-```dockerfile
-COPY initHL.sh /home/hl-user/bin/initHL.sh
-USER root
-RUN chmod +x /home/hl-user/bin/initHL.sh
-RUN apt-get update && apt-get install -y gdb
-USER hl-user
-```
-
-- Se copia el script `initHL.sh` al contenedor.
-- Se le da permiso de ejecución.
-- Se instala `gdb` para depuración con VSCode.
-
----
-
-###  Directorio y entrada por defecto
-
-```dockerfile
-WORKDIR /home/hl-user/
-CMD ["/bin/bash"]
-```
-
-El contenedor se inicia en el entorno del usuario, con una shell lista para usarse.
-
----
-
-##  Uso
-
-```bash
-docker build -t darecfm/hiperlife-app:latest -f Dockerfile-app .
-PROJECT_NAME=NOM_PROJECT docker compose up
-```
-
-> La compilación se hará automáticamente gracias al script `initHL.sh`. 
-
-> La incorporación del parámetro de entorno PROJECT_NAME en el script de inicialización (initHL.sh) permite al usuario definir dinámicamente el nombre del proyecto que desea clonar, compilar y gestionar dentro del contenedor.
-
-La compilación del código no se hace durante la construcción de la imagen.  Se traslada al script `initHL.sh` y se ejecuta **al iniciar el contenedor** con `docker-compose`.
+### `.env`
+- Este archivo permite personalizar fácilmente los parámetros de compilación y desarrollo del entorno Docker **sin editar los archivos internos del proyecto**.  
+- Los valores definidos aquí se utilizan automáticamente por `.env` y `docker-compose.yaml` para configurar el contenedor al levantarlo con caracteristicas predefinidas.
 
 
 ---
+
+## Ventajas del sistema
+
+- **Portabilidad total**: No necesitas instalar dependencias en tu máquina local. Todo funciona dentro del contenedor.
+- **Persistencia**: Código y binarios se almacenan en `External/`, accesibles desde fuera y dentro del contenedor.
+- **Automatización simple**: Todo se configura y compila automáticamente al levantar el contenedor.
+- **Personalización**: Puedes modificar `.env` o `docker-compose.yaml` para cambiar variables del entorno.
+- **Interactividad**: Accede al entorno con `docker compose exec` y sigue trabajando con herramientas adicionales si lo necesitas.
+
 ---
 
+## Notas adicionales
 
-# Configuración `initHL.sh`
-
-Este script se encarga de **preparar el entorno de compilación** y **compilar automáticamente el proyecto HyperLife** dentro del contenedor Docker.
-
----
-
-El script `initHL.sh` automatiza las tareas de:
-
-1. Verificar si el código fuente ya está en la carpeta compartida `External/`.
-2. Copiar el proyecto si no está presente.
-3. Crear las carpetas necesarias para compilar (`build`) y para instalar (`hl-bin`).
-4. Ejecutar `cmake` con los flags adecuados.
-5. Instalar el binario compilado dentro del contenedor.
+- El volumen `External/` permite mantener múltiples proyectos activos y compartir binarios entre sesiones.
+- Puedes definir nuevas variables de entorno para ajustar flags de compilación.
+- Para iniciar un nuevo proyecto, simplemente cambia el valor de `PROJECT_NAME` y se configurará automáticamente.
