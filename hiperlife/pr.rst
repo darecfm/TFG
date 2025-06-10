@@ -19,7 +19,7 @@
 
 ----------
 
-2. Start the container
+2. Start the container (inside folder app)
 
    - Custom initialization (the user defines the project name):
 
