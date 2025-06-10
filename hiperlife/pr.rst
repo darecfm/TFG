@@ -1,6 +1,6 @@
 
 
-** Create hipelife app with Docker **
+**Create hipelife app with Docker**
 ----------------------------------------------
 
 
