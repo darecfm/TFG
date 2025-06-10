@@ -1,6 +1,6 @@
 
 
-**Steps to Create the hiperlife Docker Image**
+** Create hipelife app with Docker **
 ----------------------------------------------
 
 
