@@ -28,7 +28,6 @@
 
    - Starts the hiperlife-container
    - Automatically runs ``initHL.sh`` inside the container
-   - Copies and compiles the ``hl-base-project``
    - Leaves an active terminal ready for work
 
 ----------
