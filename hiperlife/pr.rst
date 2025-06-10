@@ -6,12 +6,6 @@
 
 1. Start the container
 
-   - Default initialization (uses your project name):
-
-     .. code-block:: bash
-
-        docker compose up
-
    - Custom initialization (the user defines the project name):
 
      .. code-block:: bash
@@ -44,7 +38,7 @@
    .. code-block:: bash
 
       docker compose down                         # To stop and remove the container
-      docker rmi darecfm/hiperlife-app:latest     # To remove the image if desired
+      docker rmi hiperlife/hiperlife-app:dev     # To remove the image if desired
 
 --------------------------
 
