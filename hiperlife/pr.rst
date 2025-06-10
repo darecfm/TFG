@@ -226,15 +226,15 @@ To work properly with the dockerized hiperlife environment, make sure you have t
 
 3. **Manual execution in terminal**
   
-  - If you prefer not to use the integrated debugger, you can keep working in the integrated terminal.
+   - If you prefer not to use the integrated debugger, you can keep working in the integrated terminal.
 
-  - From ``/External/project-name/``, run:
+   - From ``/External/project-name/``, run:
 
      .. code-block:: bash
 
         mpirun -np 4 /home/hl-user/External/hl-bin/hl<Project-Name>
  
-  - Adjust ``-np 4`` to the number of MPI processes you need.
+   - Adjust ``-np 4`` to the number of MPI processes you need.
 
 6. Stop or Restart the Container
 --------------------------------
