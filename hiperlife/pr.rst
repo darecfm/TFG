@@ -1,5 +1,3 @@
-TFG
-===
 
 
 **Steps to Create the hiperlife Docker Image**
@@ -8,7 +6,7 @@ TFG
 
 1. Start the container
 
-   - Default initialization (uses "hl-base-project" as the project name):
+   - Default initialization (uses your project name):
 
      .. code-block:: bash
 
