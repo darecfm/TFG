@@ -6,34 +6,7 @@ TFG
 ----------------------------------------------
 
 
-1. Make sure you have:
-
-   In your folder (tools/docker/):
-
-   .. code-block:: text
-
-      ├── Dockerfile-app          # Custom Dockerfile
-      ├── docker-compose.yaml     # Defines the container service
-      ├── initHL.sh               # Initialization and build script
-      ├── .env                    # Customizable environment variables
-
-----------
-
-2. Build the image
-
-   From the folder where Dockerfile-app is located, run:
-
-   .. code-block:: bash
-
-      docker build -t darecfm/hiperlife-app:latest -f Dockerfile-app .
-
-   - `darecfm/hiperlife-app`: name of your custom image, you can use any name you like. But if you change it, remember to update the image name in the `docker-compose.yaml` file.
-
-   - `Dockerfile-app`: your Dockerfile.
-
-----------
-
-3. Start the container
+1. Start the container
 
    - Default initialization (uses "hl-base-project" as the project name):
 
@@ -68,7 +41,7 @@ TFG
 
 ----------
 
-4. Stop Docker
+2. Stop Docker
 
    .. code-block:: bash
 
