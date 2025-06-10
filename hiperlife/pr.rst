@@ -31,10 +31,6 @@
 
      .. code-block:: bash
 
-        PROJECT_NAME=Project-Name docker-compose up
-
-     .. code-block:: bash
-
         PROJECT_NAME=Project-Name NUM_THREADS=5 DEBUG_MODE=1 docker-compose up
 
    - If you have previously built this image, you can omit ``--build``. However, including it will force the Docker image to rebuild, which is useful if you’ve made changes to the ``Dockerfile`` or other files:
