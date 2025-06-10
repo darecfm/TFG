@@ -1,9 +1,30 @@
 
-**Create hipelife app with Docker**
+**Create the hiperlife Docker Image**
 ----------------------------------------------
 
 
-1. Start the container
+
+1. Build the image
+
+   From the folder where Dockerfile-hiperlife-app is located, run:
+
+   .. code-block:: bash
+
+      docker build -t hiperlife/hiperlife-app:dev -f Dockerfile-app .
+
+   - `darecfm/hiperlife-app`: name of your custom image, you can use any name you like. But if you change it, remember to update the image name in the `docker-compose.yaml` file.
+
+   - `Dockerfile-app`: your Dockerfile.
+
+----------
+
+3. Start the container
+
+   - Default initialization (uses "hl-base-project" as the project name):
+
+     .. code-block:: bash
+
+        docker compose up
 
    - Custom initialization (the user defines the project name):
 
@@ -27,16 +48,17 @@
 
    - Starts the hiperlife-container
    - Automatically runs ``initHL.sh`` inside the container
+   - Copies and compiles the ``hl-base-project``
    - Leaves an active terminal ready for work
 
 ----------
 
-2. Stop Docker
+4. Stop Docker
 
    .. code-block:: bash
 
       docker compose down                         # To stop and remove the container
-      docker rmi hiperlife/hiperlife-app:dev     # To remove the image if desired
+      docker rmi darecfm/hiperlife-app:latest     # To remove the image if desired
 
 --------------------------
 
@@ -232,5 +254,3 @@ To work properly with the dockerized hiperlife environment, make sure you have t
 
    .. note::
       Stopping the container does not remove the image, so your changes in ``/External/project-name`` will persist as long as you don’t manually delete the folder or the Docker image.
-
-      
