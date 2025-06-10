@@ -244,12 +244,12 @@ Para trabajar correctamente con el entorno Dockerizado de hiperlife, asegúrate 
      - Iniciará GDB y se detendrá en el primer punto de interrupción (si has marcado algún breakpoint).
 
 4. **Ejecución manual en terminal**
-   - Si prefieres no usar el depurador integrado, puedes seguir trabajando en la terminal integrada (pulsa <kbd>Ctrl</kbd>+<kbd>`</kbd>).
-   - Desde `/External/nombre-del-proyecto/`, ejecuta:
+    - Si prefieres no usar el depurador integrado, puedes seguir trabajando en la terminal integrada (pulsa <kbd>Ctrl</kbd>+<kbd>`</kbd>).
+    - Desde `/External/nombre-del-proyecto/`, ejecuta:
      ```bash
      mpirun -np 4 /home/hl-user/External/hl-bin/hl<nombre-del-proyecto>
      ```
-   - Ajusta `-np 4` según el número de procesos MPI que necesites.
+    - Ajusta `-np 4` según el número de procesos MPI que necesites.
 
 
 
