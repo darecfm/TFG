@@ -14,6 +14,8 @@ En tu carpeta ( tools/docker/):
 ├── docker-compose.yaml     # Define el servicio del contenedor
 ├── initHL.sh               # Script de inicialización y compilación
 ├── .env                    # Variables de entorno personalizables
+├── detect-compiler.sh      # Script de detección automática de arquitectura y compiladores
+
 ```
 ----------
 
