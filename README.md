@@ -1,5 +1,7 @@
 # Entorno de Desarrollo para hiperlife con Docker
 
+Este entorno forma parte de mi Trabajo de Fin de Grado (TFG) y se ha integrado en el repositorio oficial de hiperlife en GitLab: <https://gitlab.com/hiperlife/hiperlife>. Su propósito es facilitar a la comunidad científica el uso de hiperlife en cualquier plataforma, eliminando barreras de instalación y fomentando la reproducibilidad de las simulaciones.
+
 Este sistema prepara un contenedor completamente funcional para desarrollar y compilar proyectos basados en hiperlife, sin necesidad de realizar pasos manuales adicionales.
 
 ---
@@ -29,6 +31,11 @@ Este sistema prepara un contenedor completamente funcional para desarrollar y co
 - Este archivo permite personalizar fácilmente los parámetros de compilación y desarrollo del entorno Docker **sin editar los archivos internos del proyecto**.  
 - Los valores definidos aquí se utilizan automáticamente por `.env` y `docker-compose.yaml` para configurar el contenedor al levantarlo con caracteristicas predefinidas.
 
+### `detect-compiler.sh`
+- Detecta automáticamente la aquitectura del contenedor (amd64, arm64, etc.).
+- Selecciona el toolchain apropiado (gcc, g++, o wrappers MPI com mpicc/mpic++) y exporta las variables de entorno CC y CXX para que **CMake** utilice siempre el compilador correcto.
+- Evita errores habituales de `cross-compile` o de incompatibilitat de ABI quan la mateixa imatge s’executa en plataformes diferents.
+
 
 ---
 
@@ -47,3 +54,6 @@ Este sistema prepara un contenedor completamente funcional para desarrollar y co
 - El volumen `External/` permite mantener múltiples proyectos activos y compartir binarios entre sesiones.
 - Puedes definir nuevas variables de entorno para ajustar flags de compilación.
 - Para iniciar un nuevo proyecto, simplemente cambia el valor de `PROJECT_NAME` y se configurará automáticamente.
+
+
+

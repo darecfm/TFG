@@ -1,62 +1,49 @@
 FROM hiperlife/hiperlife
 
 # -----------------------------------------
-# Configurar usuario y entorno de trabajo
+# Configure user and work environment
 # -----------------------------------------
 USER hl-user
 WORKDIR /home/hl-user
 
 # -------------------------------------------------------------------
-# Clonar el proyecto si no existe 
-# El operador '|| true' evita que falle la ejecución si ya existe
+# Clone the project if it does not exist
+# The '|| true' operator prevents execution from failing if it already exists
 # -------------------------------------------------------------------
 RUN mkdir -p hl-src && cd hl-src && \
     git clone --branch dev https://gitlab.com/hiperlife/hl-base-project.git || true && \
     cd hl-base-project && git pull
 
 # -----------------------------------------
-# Configurar variables de entorno y carpetas
+# Configure environment variables and folders
 # -----------------------------------------
 ENV HL_BASE_PATH=/home/hl-user/hl-bin
 RUN mkdir -p /home/hl-user/bin
 
-# Agregar el directorio de binarios al PATH
+# Add the binaries directory to the PATH
 ENV PATH="${PATH}:/home/hl-user/bin"
 
 # -------------------------------------------------------------------
-# Incluir el script de inicialización en el contenedor
-# Este script se encargará de compilar durante la ejecución (runtime)
+# Include the initialization script in the container
+# These scripts will run during runtime.
 # -------------------------------------------------------------------
 COPY initHL.sh /home/hl-user/bin/initHL.sh
+COPY detect-compiler.sh /home/hl-user/bin/detect-compiler.sh
 
-# Cambiar a root para dar permisos y añadir herramientas necesarias
+# Switch to root to grant permissions and add necessary tools
 USER root
-RUN chmod +x /home/hl-user/bin/initHL.sh
+RUN chmod +x /home/hl-user/bin/initHL.sh /home/hl-user/bin/detect-compiler.sh
 RUN apt-get update && apt-get install -y gdb
 
-# Volver al usuario de trabajo
+# Return to the work user
 USER hl-user
 
 # -----------------------------------------
-# Directorio de trabajo por defecto
+# Default working directory
 # -----------------------------------------
 WORKDIR /home/hl-user/
 
 # -----------------------------------------
-# Comando por defecto del contenedor
+# Default container command
 # -----------------------------------------
 CMD ["/bin/bash"]
-
-# -------------------------------------------------------------------
-# NOTA IMPORTANTE:
-# La compilación del proyecto ya no se hace durante el build
-# Se realiza dinámicamente con el script initHL.sh al iniciar el contenedor
-# -------------------------------------------------------------------
-
-# ----------------------------
-# Mejoras implementadas (TFG):
-# ----------------------------
-# - Se elimina la compilación del Dockerfile y se mueve a initHL.sh.
-# - Se configura External/ como único volumen para persistencia limpia.
-# - Se copia initHL.sh y se ejecuta en runtime para inicialización flexible.
-# - Se deja CMD ["/bin/bash"] para permitir interacción manual si se requiere.

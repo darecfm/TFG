@@ -10,15 +10,23 @@
 #-------------------------------------------------------------------------------
 # Environment Setup and Validation
 #-------------------------------------------------------------------------------
+
+# Detectar arquitectura y establecer compiladores
+if [ -f "/home/hl-user/bin/detect-compiler.sh" ]; then
+    source /home/hl-user/bin/detect-compiler.sh
+    echo "INFO" "Detected architecture: $(uname -m)"
+    echo "INFO" "Using compiler: ${C_COMPILER:-/usr/bin/gcc}"
+fi
+
 # Default environment variables
-PROJECT_NAME="${PROJECT_NAME:-base-project}"
+PROJECT_NAME="${PROJECT_NAME:-Prove0001}"
 DEBUG_MODE="${DEBUG_MODE:-1}"
 BUILD_DIR="${BUILD_DIR:-/home/hl-user/External/${PROJECT_NAME}/build}"
 SOURCE_DIR="${SOURCE_DIR:-/home/hl-user/External/${PROJECT_NAME}}"
 INSTALL_PREFIX="${INSTALL_PREFIX:-/home/hl-user/External/hl-bin}"
-C_COMPILER="${C_COMPILER:-/usr/bin/aarch64-linux-gnu-gcc}"
-CXX_COMPILER="${CXX_COMPILER:-/usr/bin/aarch64-linux-gnu-g++}"
-NUM_THREADS="${NUM_THREADS:-4}"
+C_COMPILER="${C_COMPILER:-/usr/bin/gcc}"
+CXX_COMPILER="${CXX_COMPILER:-/usr/bin/g++}"
+NUM_THREADS="${NUM_THREADS:--1}"
 HL_BASE_PATH="${HL_BASE_PATH:-/home/hl-user/hl-bin}"
 ENABLE_TESTS="${ENABLE_TESTS:-1}"
 ENABLE_EXAMPLES="${ENABLE_EXAMPLES:-1}"
@@ -43,6 +51,7 @@ print_configuration() {
 #-------------------------------------------------------------------------------
 setup_project_structure() {
     echo "Setting up project structure..."
+    mkdir -p "/home/hl-user/External"
     if [ ! -d "/home/hl-user/External/${PROJECT_NAME}" ]; then
         echo "Creating new project from template..."
         cp -r /home/hl-user/hl-src/hl-base-project "/home/hl-user/External/$PROJECT_NAME" || {
@@ -335,15 +344,13 @@ detect_system_resources() {
     local available_memory=$(free -g | awk '/^Mem:/{print $2}')
     local available_cores=$(nproc)
     
-    # Solo establecer NUM_THREADS si no se proporcionó como variable de entorno
-    if [ -z "$NUM_THREADS" ]; then
-        if [ $available_cores -gt 2 ]; then
-            NUM_THREADS=$((available_cores - 2))
-        else
-            NUM_THREADS=1
-        fi
+    # Manejar el valor -1 para usar todos los cores disponibles
+    if [ "$NUM_THREADS" = "-1" ]; then
+        NUM_THREADS=$available_cores
+    elif [ -z "$NUM_THREADS" ]; then
+        NUM_THREADS=$available_cores
     fi
-    
+
     log_message "INFO" "Detected $available_cores cores, using $NUM_THREADS threads"
     log_message "INFO" "Available memory: ${available_memory}G"
 }
