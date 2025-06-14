@@ -2,7 +2,7 @@
 
 Este entorno forma parte de mi Trabajo de Fin de Grado (TFG) y se ha integrado en el repositorio oficial de hiperlife en GitLab: <https://gitlab.com/hiperlife/hiperlife>. Su propósito es facilitar a la comunidad científica el uso de hiperlife en cualquier plataforma, eliminando barreras de instalación y fomentando la reproducibilidad de las simulaciones.
 
-Este sistema prepara un contenedor completamente funcional para desarrollar y compilar proyectos basados en hiperlife, sin necesidad de realizar pasos manuales adicionales.
+Este sistema prepara un contenedor completamente funcional para desarrollar y compilar proyectos basados en hiperlife, sin necesidad de realizar pasos manuales adicionales .
 
 ---
 
