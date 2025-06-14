@@ -10,10 +10,12 @@
 In your folder ( tools/docker/):
 
 ```
-├── Dockerfile-app          # Custom Dockerfile
-├── docker-compose.yaml     # Defines the container service
-├── initHL.sh               # Initialization and build script
-├── .env                    # Customizable environment variables
+├── Dockerfile-app          # Dockerfile personalizado
+├── docker-compose.yaml     # Define el servicio del contenedor
+├── initHL.sh               # Script de inicialización y compilación
+├── .env                    # Variables de entorno personalizables
+├── detect-compiler.sh      # Script de detección automática de arquitectura y compiladores
+
 ```
 ----------
 
