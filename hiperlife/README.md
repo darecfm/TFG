@@ -74,6 +74,21 @@ Esto:
 docker compose down                         # Para parar y eliminar el contenedor
 docker rmi darecfm/hiperlife-app:latest     # Para borrar la imagen si lo deseas
 ```
+---
+
+## **Pasos para crear la imagen Docker desde DockerHub**
+
+**1. Asegurate de descargar el archivo docker-compose.yaml**
+
+**2. Ejecuta el siguiente comando en la terminal**
+
+  - Asegurate de estar en la misma ruta con el archivo que descargaste.
+  ```
+  PROJECT_NAME=Nombre-del-Proyecto docker compose up --pull always --force-recreate
+  ```
+
+**3.	Recuerda que si lo haces por Windows ejecuta el comando desde Git Bash (incluido en Git for Windows).** 
+
 
 ---
 --------------
@@ -147,6 +162,11 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
 ## 2. Extensiones necesarias en Visual Studio Code
 
 Para trabajar correctamente con el entorno Dockerizado de hiperlife, asegúrate de tener instaladas las siguientes extensiones en VS Code:
+
+#### • Remote Explorer
+
+- **ID:** `ms-vscode.remote-explorer`  
+- **Funcionalidad:** Habilita la vista Remote Explorer en la barra lateral de VS Code. Desde esa vista puedes listar y gestionar destinos remotos (contenedores Docker, hosts SSH, instancias WSL)
 
 #### • Dev Containers
 
