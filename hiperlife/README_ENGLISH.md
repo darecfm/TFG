@@ -1,7 +1,7 @@
 
 ---
 
-## **Steps to Create the hiperlife Docker Image**
+## **STEPS TO CREATE THE HIPERLIFE DOCKER IMAGE**
 
 ---
 
