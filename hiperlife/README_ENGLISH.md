@@ -162,6 +162,11 @@ Below is a technical description of the complete flow for preparing, configuring
 
 To work properly with the dockerized hiperlife environment, make sure you have the following VS Code extensions installed:
 
+#### • Remote Explorer
+
+- **ID:** `ms-vscode.remote-explorer`  
+- **Functionality:** Enables the *Remote Explorer* view in the VS Code sidebar. From this panel, you can list and manage remote targets (Docker containers, SSH hosts, WSL instances).
+
 #### • Dev Containers
 
 - **ID:** `ms-vscode-remote.remote-containers`  
