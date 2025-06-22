@@ -1,5 +1,3 @@
-# TFG
----
 
 ## **Pasos para crear la imagen Docker de hiperlife**
 
