@@ -91,16 +91,15 @@ docker rmi darecfm/hiperlife-app:latest     # Para borrar la imagen si lo deseas
 
 
 ---
---------------
 ---
 ---
 
----
----
 ## **PASOS PARA PROBAR TU APP CON DOCKER + HIPERLIFE + VS CODE**
+
 ---
 
-A continuación se describe, de forma técnica, el flujo completo de preparación, configuración y ejecución de una aplicación basada en Hiperlife dentro de un contenedor Docker, usando Visual Studio Code como IDE.
+
+A continuación se describe, de forma técnica, el flujo completo de preparación, configuración y ejecución de una aplicación basada en hiperlife dentro de un contenedor Docker, usando Visual Studio Code como IDE.
 
 ## 1. Requisitos Previos
 
@@ -123,7 +122,7 @@ A continuación se describe, de forma técnica, el flujo completo de preparació
 
 #### 3. Repositorio hiperlife
 
-- Código fuente de ejemplo (por ejemplo: `hl-base-project`) o tu propio proyecto basado en el framework Hiperlife.
+- Código fuente de ejemplo (por ejemplo: `hlnombre-del-proyecto`) o tu propio proyecto basado en el framework hiperlife.
 
 - **Estructura esperada (dentro de External/):**
 
