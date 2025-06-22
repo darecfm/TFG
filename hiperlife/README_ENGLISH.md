@@ -94,8 +94,9 @@ PROJECT_NAME=Your-Project-Name docker compose up --pull always --force-recreate
 ---
 
 ---
----
+
 ## **STEPS TO TEST YOUR APP WITH DOCKER + HIPERLIFE + VS CODE**
+
 ---
 
 Below is a technical description of the complete flow for preparing, configuring, and running a Hiperlife-based application inside a Docker container using Visual Studio Code and Dev Containers.
