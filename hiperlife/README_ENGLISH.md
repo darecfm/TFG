@@ -76,7 +76,20 @@ docker rmi darecfm/hiperlife-app:latest     # To remove the image if desired
 ```
 
 ---
---------------
+
+## **STEPS TO CREATE THE DOCKER IMAGE FROM DOCKERHUB**
+
+**1. Make sure to download the `docker-compose.yaml` file**
+
+**2. Run the following command in the terminal**
+
+- Ensure you're in the same directory where the downloaded file is located.
+
+```
+PROJECT_NAME=Your-Project-Name docker compose up --pull always --force-recreate
+```
+**3. If you’re using Windows, make sure to run the command from Git Bash (included in Git for Windows).**
+
 ---
 ---
 
